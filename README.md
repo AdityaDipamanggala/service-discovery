@@ -30,13 +30,13 @@ URL:  http://localhost:8888/stats
 ``` json
 {
     "servers": {
-        <string>: {
-            "hit_count": <INT>,
-            "status": <ENUM: HEALTHY, UNHEALTHY, DOWN>
+        "<STRING>": {
+            "hit_count": "<INT>",
+            "status": "<ENUM: HEALTHY, UNHEALTHY, DOWN>"
         },
-        ...
+        "..."
     },
-    "total_hit_count": <INT>
+    "total_hit_count": "<INT>"
 }
 
 {
@@ -65,9 +65,9 @@ URL: http://localhost:<PORT>/transaction
 Body:  
 ``` json
 {
-    "game": <STRING>,
-    "gamer_id": <STRING>,
-    "points":<INT>
+    "game": "<STRING>",
+    "gamer_id": "<STRING>",
+    "points": "<INT>"
 }
 {
     "game": "PUBGM",
@@ -80,9 +80,9 @@ Body:
 **Status Code 200**
 ``` json
 {
-    "game": <STRING>,
-    "gamer_id": <STRING>,
-    "points":<INT>
+    "game": "<STRING>",
+    "gamer_id": "<STRING>",
+    "points": "<INT>"
 }
 {
     "game": "PUBGM",
