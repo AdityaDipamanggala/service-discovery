@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"service-discovery/shared"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo"
@@ -17,7 +18,7 @@ import (
 var (
 	port      string
 	startTime time.Time
-	forceLag  bool
+	forceLat  int = 80
 )
 
 func main() {
@@ -35,12 +36,8 @@ func main() {
 	// Registered routes
 	e.GET("/healthcheck", healthcheckHandler)
 	e.POST("/transaction", transactionHandler)
-	e.POST("/force-lag/true", func(ctx echo.Context) error {
-		forceLag = true
-		return nil
-	})
-	e.POST("/force-lag/false", func(ctx echo.Context) error {
-		forceLag = false
+	e.PUT("/force-lat", func(ctx echo.Context) error {
+		forceLat, _ = strconv.Atoi(ctx.QueryParam("lat"))
 		return nil
 	})
 
@@ -68,14 +65,19 @@ type PointTransaction struct {
 }
 
 func transactionHandler(ctx echo.Context) error {
+	start := time.Now()
 	transactionData := &PointTransaction{}
-	if ctx.QueryParam("is_force_lag") == "true" || forceLag {
-		time.Sleep(1 * time.Second)
-	}
+	time.Sleep(time.Duration(forceLat * int(time.Millisecond)))
 	err := ctx.Bind(transactionData)
 	if err != nil {
 		return ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"error": err.Error(),
+		})
+	}
+	timeout, _ := strconv.Atoi(ctx.Request().Header.Get("timeout"))
+	if timeout > 0 && time.Since(start).Milliseconds() > int64(timeout) {
+		return ctx.JSON(http.StatusRequestTimeout, map[string]interface{}{
+			"error": "Request timeout",
 		})
 	}
 	return ctx.JSON(http.StatusOK, transactionData)
